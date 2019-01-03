@@ -20,11 +20,16 @@ import br.com.alura.loja.modelo.Produto;
 
 public class ClienteTest {
 	
-	HttpServer server;
+	private HttpServer server;
+	private WebTarget target;
+	private Client client;
 	
 	@Before
 	public void startServidor() {
 		this.server = Servidor.inicializaServidor();
+		this.client = ClientBuilder.newClient();
+		this.target = client.target("http://localhost:8080");
+
 	}
 	
 	@After
@@ -35,9 +40,6 @@ public class ClienteTest {
 	
 	@Test
 	public void testaQueBuscarUmCarrinhoTrazOCarrinhoEsperado() {
-		
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8080");
 		String conteudo = target.path("/carrinhos/1").request().get(String.class);
 		Carrinho carrinho = (Carrinho) new XStream().fromXML(conteudo);
 		Assert.assertEquals("Rua Vergueiro 3185, 8 andar", carrinho.getRua());
@@ -45,8 +47,6 @@ public class ClienteTest {
 	
 	@Test
 	public void testaQueInsercaoUmCarrinoFunciona() {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8080");
 		Carrinho carrinho = new Carrinho();
 		carrinho.adiciona(new Produto(314L,"Tablet", 999,1));
 		carrinho.setRua("Rua Vergueiro");
@@ -55,7 +55,11 @@ public class ClienteTest {
 		
 		Entity<String> entity = Entity.entity(xml, MediaType.APPLICATION_XML);
 		Response response = target.path("/carrinhos").request().post(entity);
-		Assert.assertEquals("<status>sucesso</status>", response.readEntity(String.class));
+		Assert.assertEquals(201, response.getStatus());
+		
+		String location = response.getHeaderString("Location");
+	    String conteudo = this.client.target(location).request().get(String.class);
+	    Assert.assertTrue(conteudo.contains("Tablet"));
 	}
 
 }
