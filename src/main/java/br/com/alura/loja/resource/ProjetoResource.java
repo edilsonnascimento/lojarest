@@ -20,7 +20,7 @@ import br.com.alura.loja.dao.ProjetoDAO;
 import br.com.alura.loja.modelo.Carrinho;
 import br.com.alura.loja.modelo.Projeto;
 
-@Path("/projetos")
+@Path("projetos")
 public class ProjetoResource {
 
 	@Path("{id}")
