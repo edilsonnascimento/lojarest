@@ -4,9 +4,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Carrinho {
 
 	private List<Produto> produtos = new ArrayList<Produto>();
@@ -19,6 +25,9 @@ public class Carrinho {
 		return this;
 	}
 
+	public Carrinho() {
+	}
+	
 	public Carrinho para(String rua, String cidade) {
 		this.rua = rua;
 		this.cidade = cidade;
